@@ -7,6 +7,9 @@
 //   conn            -> Connection userdata ("OpenBlox.Connection")
 //   Vector3.new()   -> Vector3 userdata ("OpenBlox.Vector3")
 #include "bindings.h"
+#include "mathx.h"
+#include "services.h"
+#include "physics.h"
 
 #include <lua.h>
 #include <lualib.h>
@@ -17,7 +20,9 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <algorithm>
 #include <set>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -45,12 +50,17 @@ struct UInstance
     Instance* ptr;
 };
 
+static bool isInstanceUd(lua_State* L, int idx);
+
 static UInstance* checkInstance(lua_State* L, int idx)
 {
-    void* ud = luaL_checkudata(L, idx, "OpenBlox.Instance");
-    if (!ud) // also accept the DataModel metatable
-        ud = luaL_checkudata(L, idx, "OpenBlox.DataModel");
-    return (UInstance*)ud;
+    // Accept both the Instance and DataModel metatables: luaL_checkudata
+    // raises on mismatch instead of returning null, so the old fallback
+    // after it was dead code (tostring(game) / game == game errored).
+    if (isInstanceUd(L, idx))
+        return (UInstance*)lua_touserdata(L, idx);
+    // Standard type-error message for the common case.
+    return (UInstance*)luaL_checkudata(L, idx, "OpenBlox.Instance");
 }
 
 static bool isInstanceUd(lua_State* L, int idx)
@@ -75,10 +85,40 @@ static void pushInstance(lua_State* L, Instance* inst)
         lua_pushnil(L);
         return;
     }
+    // Identity cache: one userdata per Instance, so `part == workspace.Part`,
+    // table keys, and event payloads all agree on object identity.
+    Host* h = oboxGetHost(L);
+    auto it = h->instanceRefs.find(inst);
+    if (it != h->instanceRefs.end())
+    {
+        lua_getref(L, it->second);
+        return;
+    }
     UInstance* u = (UInstance*)lua_newuserdata(L, sizeof(UInstance));
     u->ptr = inst;
-    luaL_getmetatable(L, "OpenBlox.Instance");
+    luaL_getmetatable(L, inst->className() == "DataModel" ? "OpenBlox.DataModel"
+                                                         : "OpenBlox.Instance");
     lua_setmetatable(L, -2);
+    // Luau's lua_ref does NOT pop the value (unlike PUC luaL_ref), so no
+    // duplication is needed: the userdata stays on top for the caller.
+    int ref = lua_ref(L, -1);
+    h->instanceRefs[inst] = ref;
+}
+
+// Shared instance helpers used by the other binding modules.
+Instance* oboxCheckInstance(lua_State* L, int idx)
+{
+    return checkInstance(L, idx)->ptr;
+}
+
+bool oboxIsInstance(lua_State* L, int idx)
+{
+    return isInstanceUd(L, idx);
+}
+
+void oboxPushInstance(lua_State* L, Instance* inst)
+{
+    pushInstance(L, inst);
 }
 
 // ---------------------------------------------------------------------------
@@ -113,7 +153,12 @@ static int oboxSignalConnect(lua_State* L)
     lua_pushvalue(L, 2);
     int ref = lua_ref(L, -1);
     lua_pop(L, 1);
-    int id = s->ptr->connect(L, ref);
+    int id = s->ptr->connect(h->L, L, ref);
+    if (id == 0)
+    {
+        lua_unref(L, ref);
+        luaL_errorL(L, "signal handler limit reached");
+    }
 
     UConn* c = (UConn*)lua_newuserdata(L, sizeof(UConn));
     c->sig = s->ptr;
@@ -127,10 +172,16 @@ static int oboxSignalOnce(lua_State* L)
 {
     USignal* s = (USignal*)luaL_checkudata(L, 1, "OpenBlox.Signal");
     luaL_checktype(L, 2, LUA_TFUNCTION);
+    Host* h = getHost(L);
     lua_pushvalue(L, 2);
     int ref = lua_ref(L, -1);
     lua_pop(L, 1);
-    int id = s->ptr->connect(L, ref, true);
+    int id = s->ptr->connect(h->L, L, ref, true);
+    if (id == 0)
+    {
+        lua_unref(L, ref);
+        luaL_errorL(L, "signal handler limit reached");
+    }
 
     UConn* c = (UConn*)lua_newuserdata(L, sizeof(UConn));
     c->sig = s->ptr;
@@ -140,10 +191,24 @@ static int oboxSignalOnce(lua_State* L)
     return 1;
 }
 
+static int oboxSignalEq(lua_State* L)
+{
+    USignal* a = (USignal*)luaL_checkudata(L, 1, "OpenBlox.Signal");
+    USignal* b = (USignal*)luaL_checkudata(L, 2, "OpenBlox.Signal");
+    lua_pushboolean(L, a->ptr == b->ptr);
+    return 1;
+}
+
 static int oboxSignalWait(lua_State* L)
 {
     USignal* s = (USignal*)luaL_checkudata(L, 1, "OpenBlox.Signal");
+    Host* h = getHost(L);
     s->ptr->addWaiter(L);
+    // Park (don't sleep): the thread stays suspended with no wake time until
+    // the signal fires. Parking makes the yield scheduler-visible, so the
+    // "yielded outside of task.wait()" check passes, the registry anchor is
+    // retained, and task.cancel can drop the waiter.
+    h->sched->park(L);
     return lua_yield(L, 0);
 }
 
@@ -376,6 +441,12 @@ static void pushPropValue(lua_State* L, const PropValue& v)
     }
     else if (std::holds_alternative<Instance*>(v))
         pushInstance(L, std::get<Instance*>(v));
+    else if (std::holds_alternative<CFrameV>(v))
+        oboxPushCFrame(L, std::get<CFrameV>(v));
+    else if (std::holds_alternative<UDim2V>(v))
+        oboxPushUDim2(L, std::get<UDim2V>(v));
+    else if (std::holds_alternative<BrickColorV>(v))
+        oboxPushBrickColor(L, std::get<BrickColorV>(v));
     else
         lua_pushnil(L);
 }
@@ -438,12 +509,48 @@ static std::string toPropValue(lua_State* L, int idx, const std::string& type, P
         out = Color3{c->r, c->g, c->b};
         return "";
     }
+    if (type == "CFrame")
+    {
+        if (!oboxIsCFrame(L, idx))
+            return "CFrame expected";
+        out = oboxCheckCFrame(L, idx)->c;
+        return "";
+    }
+    if (type == "UDim2")
+    {
+        if (!oboxIsUDim2(L, idx))
+            return "UDim2 expected";
+        out = oboxCheckUDim2(L, idx)->v;
+        return "";
+    }
+    if (type == "BrickColor")
+    {
+        if (!oboxIsBrickColor(L, idx))
+            return "BrickColor expected";
+        UBrickColor* ubc = oboxCheckBrickColor(L, idx);
+        size_t bcc = 0;
+        const BrickColorV* bcp = brickColorPalette(bcc);
+        int bci = ubc->paletteIndex;
+        out = bcp[(bci < 0 || (size_t)bci >= bcc) ? 0 : bci];
+        return "";
+    }
+    if (type == "Instance")
+    {
+        if (lua_isnil(L, idx))
+        {
+            out = static_cast<Instance*>(nullptr);
+            return "";
+        }
+        if (!isInstanceUd(L, idx))
+            return "Instance expected";
+        out = checkInstance(L, idx)->ptr;
+        return "";
+    }
     return "unsupported property type";
 }
 
 // Converts a Lua value to an attribute value (best-effort type mapping).
-static bool toAttrValue(lua_State* L, int idx, AttrValue& out)
-{
+static bool toAttrValue(lua_State* L, int idx, AttrValue& out){
     int t = lua_type(L, idx);
     if (t == LUA_TNUMBER) { out = lua_tonumber(L, idx); return true; }
     if (t == LUA_TSTRING) { out = std::string(lua_tostring(L, idx)); return true; }
@@ -462,8 +569,27 @@ static bool toAttrValue(lua_State* L, int idx, AttrValue& out)
             out = Color3{c->r, c->g, c->b};
             return true;
         }
+        // CFrame, UDim2 and BrickColor have no AttrValue representation (the
+        // AttrValue variant only covers the core scalar/vector types), so they
+        // are rejected as attributes rather than silently dropped.
+        if (oboxIsCFrame(L, idx) || oboxIsUDim2(L, idx) || oboxIsBrickColor(L, idx))
+            return false;
     }
     return false;
+}
+
+// Shared property-value helpers used by the other binding modules
+// (declared in bindings.h).
+void oboxPushPropValue(lua_State* L, const PropValue& v)
+{
+    pushPropValue(L, v);
+}
+
+bool oboxToPropValue(lua_State* L, int idx, const std::string& type, PropValue& out,
+                     std::string& err)
+{
+    err = toPropValue(L, idx, type, out);
+    return err.empty();
 }
 
 // ---------------------------------------------------------------------------
@@ -568,8 +694,12 @@ static int instFindFirstChildWhichIsA(lua_State* L)
 }
 
 // Deep clone helper: same class, copied name/props/attributes/tags/children.
-static Instance* cloneTree(Host* h, Instance* src)
+// `seen` guards against cyclic source trees (belt-and-braces alongside the
+// setParent cycle rejection): a source already on the clone path is skipped.
+static Instance* cloneTree(Host* h, Instance* src, std::unordered_set<Instance*>& seen)
 {
+    if (!seen.insert(src).second)
+        return nullptr;
     Instance* dst = h->game->createInstance(src->className());
     if (!dst)
         return nullptr;
@@ -588,7 +718,7 @@ static Instance* cloneTree(Host* h, Instance* src)
         dst->addTag(t);
     for (Instance* c : src->children())
     {
-        Instance* cc = cloneTree(h, c);
+        Instance* cc = cloneTree(h, c, seen);
         if (cc)
             cc->setParent(dst);
     }
@@ -599,7 +729,8 @@ static int instClone(lua_State* L)
 {
     UInstance* u = checkInstance(L, 1);
     Host* h = getHost(L);
-    Instance* c = cloneTree(h, u->ptr);
+    std::unordered_set<Instance*> seen;
+    Instance* c = cloneTree(h, u->ptr, seen);
     if (!c)
         luaL_errorL(L, "Clone failed for class %s", u->ptr->className().c_str());
     pushInstance(L, c);
@@ -693,6 +824,13 @@ static int instanceIndexImpl(lua_State* L, Instance* inst)
         return 1;
     }
 
+    // Per-module method dispatch (services, physics). Each returns true when
+    // it handled the key, leaving the method closure on the stack.
+    if (oboxServicesIndex(L, inst, key))
+        return 1;
+    if (oboxPhysicsIndex(L, inst, key))
+        return 1;
+
     // RunService methods (v0.1: headless server context).
     if (inst->className() == "RunService")
     {
@@ -772,7 +910,8 @@ static int instanceNewIndex(lua_State* L)
                 luaL_errorL(L, "Parent must be an Instance or nil");
             newp = checkInstance(L, 3)->ptr;
         }
-        inst->setParent(newp);
+        if (!inst->setParent(newp))
+            luaL_errorL(L, "Parenting cycle: cannot set Parent");
         if (oldp && oldp != newp)
         {
             pushInstance(L, inst);
@@ -866,6 +1005,9 @@ static int oboxInstanceNew(lua_State* L)
 {
     const char* className = luaL_checkstring(L, 1);
     Host* h = getHost(L);
+    if (h->game->overInstanceCap())
+        luaL_errorL(L, "Instance limit reached (%d); cannot create \"%s\"",
+                    (int)DataModel::kMaxInstances, className);
     Instance* inst = h->game->createInstance(className);
     if (!inst)
         luaL_errorL(L, "Unable to create an Instance of type \"%s\"", className);
@@ -1015,6 +1157,7 @@ static int oboxRequire(lua_State* L)
     int threadRef = lua_ref(co, -1);
     lua_pop(co, 1);
     lua_pop(L, 1); // pop thread object
+    luaL_sandboxthread(co); // per-module isolated environment, like oboxRunFile
     h->names.push_back(inst->getFullName());
     lua_setthreaddata(co, (void*)h->names.back().c_str());
 
@@ -1037,6 +1180,13 @@ static int oboxRequire(lua_State* L)
     if (status == LUA_YIELD)
     {
         lua_unref(L, threadRef);
+        // Clear the cycle sentinel so a later require can retry (same as the
+        // error path below).
+        lua_getfield(L, LUA_REGISTRYINDEX, "OpenBlox.ModuleCache");
+        lua_pushlightuserdata(L, inst);
+        lua_pushnil(L);
+        lua_rawset(L, -3);
+        lua_pop(L, 1);
         luaL_errorL(L, "require: ModuleScript '%s' must not yield", inst->name().c_str());
     }
     if (status != LUA_OK)
@@ -1087,6 +1237,7 @@ void oboxRegisterApi(lua_State* L, Host* host)
         };
         luaL_newmetatable(L, "OpenBlox.Instance");
         luaL_register(L, nullptr, instanceMt);
+        lua_setreadonly(L, -1, true); // scripts must not hijack API dispatch
         lua_pop(L, 1);
     }
     {
@@ -1099,6 +1250,7 @@ void oboxRegisterApi(lua_State* L, Host* host)
         };
         luaL_newmetatable(L, "OpenBlox.DataModel");
         luaL_register(L, nullptr, gameMt);
+        lua_setreadonly(L, -1, true);
         lua_pop(L, 1);
     }
     {
@@ -1112,6 +1264,12 @@ void oboxRegisterApi(lua_State* L, Host* host)
         lua_newtable(L);
         luaL_register(L, nullptr, signalMethods);
         lua_setfield(L, -2, "__index");
+        lua_pushcfunction(L, oboxSignalEq, "Signal.__eq");
+        lua_setfield(L, -2, "__eq");
+        lua_getfield(L, -1, "__index");
+        lua_setreadonly(L, -1, true);
+        lua_pop(L, 1);
+        lua_setreadonly(L, -1, true);
         lua_pop(L, 1);
     }
     {
@@ -1135,6 +1293,7 @@ void oboxRegisterApi(lua_State* L, Host* host)
                           },
                           "Connection.__index");
         lua_setfield(L, -2, "__index");
+        lua_setreadonly(L, -1, true);
         lua_pop(L, 1);
     }
     {
@@ -1151,6 +1310,7 @@ void oboxRegisterApi(lua_State* L, Host* host)
         };
         luaL_newmetatable(L, "OpenBlox.Vector3");
         luaL_register(L, nullptr, vec3Mt);
+        lua_setreadonly(L, -1, true);
         lua_pop(L, 1);
     }
     {
@@ -1162,6 +1322,7 @@ void oboxRegisterApi(lua_State* L, Host* host)
         };
         luaL_newmetatable(L, "OpenBlox.Color3");
         luaL_register(L, nullptr, color3Mt);
+        lua_setreadonly(L, -1, true);
         lua_pop(L, 1);
     }
 
@@ -1238,6 +1399,11 @@ void oboxRegisterApi(lua_State* L, Host* host)
     lua_setglobal(L, "warn");
     lua_pushcfunction(L, oboxRequire, "require");
     lua_setglobal(L, "require");
+
+    // Per-module globals (CFrame/UDim/UDim2/BrickColor/Enum, TweenInfo).
+    oboxRegisterMath(L);
+    oboxRegisterServices(L);
+    oboxRegisterPhysics(L);
 
     // WaitForChild poll loop in Lua: C functions cannot yield in a loop and
     // resume correctly, but Lua functions can.
@@ -1327,6 +1493,13 @@ bool oboxRunFile(Host* host, const std::string& path)
 
 // AABB touch detection between Parts parented under Workspace.
 // Fires Touched on new overlaps and TouchEnded when they separate.
+//
+// Volume-overlap semantics are preserved exactly: faces that merely touch
+// (e.g. one part's top at exactly y=4.0 against another's bottom) do NOT
+// count as overlapping.
+
+// NOTE: kept for compatibility; touchCheck now uses the cached
+// pair test below (identical semantics, single getProp per part).
 static bool aabbOverlap(Part* a, Part* b)
 {
     PropValue pa, sa, pb, sb;
@@ -1345,13 +1518,37 @@ static bool aabbOverlap(Part* a, Part* b)
            std::fabs(p1->z - p2->z) <= (s1->z + s2->z) / 2.0;
 }
 
-static void collectParts(Instance* root, std::vector<Part*>& out)
+// Cached pair test: same volume-overlap semantics as aabbOverlap but works
+// off the per-part cache collected once per frame (no string lookups).
+static bool aabbOverlapCached(const PartCache& a, const PartCache& b)
+{
+    return std::fabs(a.pos.x - b.pos.x) <= (a.size.x + b.size.x) / 2.0 &&
+           std::fabs(a.pos.y - b.pos.y) <= (a.size.y + b.size.y) / 2.0 &&
+           std::fabs(a.pos.z - b.pos.z) <= (a.size.z + b.size.z) / 2.0;
+}
+
+static void collectPartCache(Instance* root, std::vector<PartCache>& out, Host* host)
 {
     for (Instance* c : root->children())
     {
         if (!c->isDestroyed() && c->isA("Part"))
-            out.push_back(static_cast<Part*>(c));
-        collectParts(c, out);
+        {
+            Part* p = static_cast<Part*>(c);
+            PropValue pv, sv, av;
+            Vec3 pos{0, 0, 0}, size{0, 0, 0};
+            if (p->getProp("Position", pv))
+                if (const Vec3* v = std::get_if<Vec3>(&pv))
+                    pos = *v;
+            if (p->getProp("Size", sv))
+                if (const Vec3* v = std::get_if<Vec3>(&sv))
+                    size = *v;
+            if (p->getProp("Anchored", av))
+                if (const bool* a = std::get_if<bool>(&av))
+                    if (!*a)
+                        host->sawUnanchored = true;
+            out.push_back(PartCache{p, pos, size});
+        }
+        collectPartCache(c, out, host);
     }
 }
 
@@ -1359,32 +1556,102 @@ static void touchCheck(Host* host)
 {
     lua_State* L = host->L;
     Instance* ws = host->game->getService("Workspace");
-    std::vector<Part*> parts;
-    collectParts(ws, parts);
 
-    using TouchKey = std::pair<Instance*, Instance*>;
-    std::set<TouchKey>& touching = host->touching;
-    std::set<TouchKey> now;
+    // Collect parts ONCE per frame: a single getProp per part, no per-pair
+    // string lookups. Also flags any unanchored part for the early-exit check.
+    host->sawUnanchored = false;
+    std::vector<PartCache> parts;
+    collectPartCache(ws, parts, host);
 
-    for (size_t i = 0; i < parts.size(); ++i)
-        for (size_t j = i + 1; j < parts.size(); ++j)
+    // Dirty check: when the part set and every position/size are identical to
+    // last frame, the pair set cannot have changed — skip pair processing.
+    bool dirty = true;
+    if (host->lastTouchValid && parts.size() == host->lastTouchParts.size())
+    {
+        dirty = false;
+        for (size_t i = 0; i < parts.size(); ++i)
         {
-            Part* a = parts[i];
-            Part* b = parts[j];
-            if (!aabbOverlap(a, b))
-                continue;
-            TouchKey k = (a < b) ? TouchKey(a, b) : TouchKey(b, a);
-            now.insert(k);
-            if (touching.find(k) == touching.end())
+            const PartCache& a = parts[i];
+            const PartCache& b = host->lastTouchParts[i];
+            if (a.part != b.part || a.pos.x != b.pos.x || a.pos.y != b.pos.y ||
+                a.pos.z != b.pos.z || a.size.x != b.size.x || a.size.y != b.size.y ||
+                a.size.z != b.size.z)
             {
-                pushInstance(L, b);
-                a->touched.fire(*host->sched, L, 1);
-                lua_pop(L, 1);
-                pushInstance(L, a);
-                b->touched.fire(*host->sched, L, 1);
-                lua_pop(L, 1);
+                dirty = true;
+                break;
             }
         }
+    }
+    host->lastTouchParts = parts;
+    host->lastTouchValid = true;
+    if (!dirty)
+        return;
+
+    using TouchKey = std::pair<Instance*, Instance*>;
+    std::set<TouchKey> now;
+
+    // Sweep-and-prune on the X axis: sort by minX, keep an active list of
+    // parts whose X interval reaches the current part, and only run the full
+    // AABB test on pairs with overlapping X intervals.
+    size_t n = parts.size();
+    std::vector<size_t> order(n);
+    for (size_t i = 0; i < n; ++i)
+        order[i] = i;
+    std::sort(order.begin(), order.end(), [&](size_t a, size_t b) {
+        return (parts[a].pos.x - parts[a].size.x / 2.0) <
+               (parts[b].pos.x - parts[b].size.x / 2.0);
+    });
+    std::vector<size_t> active;
+    active.reserve(n);
+    for (size_t oi = 0; oi < n; ++oi)
+    {
+        size_t i = order[oi];
+        double minX = parts[i].pos.x - parts[i].size.x / 2.0;
+        size_t kept = 0;
+        for (size_t ai = 0; ai < active.size(); ++ai)
+        {
+            size_t j = active[ai];
+            double jMaxX = parts[j].pos.x + parts[j].size.x / 2.0;
+            if (jMaxX < minX)
+                continue; // X intervals no longer overlap
+            active[kept++] = j;
+            const PartCache& a = parts[i];
+            const PartCache& b = parts[j];
+            if (!aabbOverlapCached(a, b))
+                continue;
+            Part* pa = a.part;
+            Part* pb = b.part;
+            TouchKey k = (pa < pb) ? TouchKey(pa, pb) : TouchKey(pb, pa);
+            now.insert(k);
+        }
+        active.resize(kept);
+        active.push_back(i);
+    }
+
+    std::set<TouchKey>& touching = host->touching;
+    if (!host->touchPrimed)
+    {
+        // First call: record the currently-overlapping pairs WITHOUT firing
+        // any events, so pre-existing overlaps at startup don't produce a
+        // spurious Touched on frame 1.
+        touching = now;
+        host->touchPrimed = true;
+        return;
+    }
+
+    for (const TouchKey& k : now)
+    {
+        if (touching.find(k) != touching.end())
+            continue;
+        Part* a = static_cast<Part*>(k.first);
+        Part* b = static_cast<Part*>(k.second);
+        pushInstance(L, b);
+        a->touched.fire(*host->sched, L, 1);
+        lua_pop(L, 1);
+        pushInstance(L, a);
+        b->touched.fire(*host->sched, L, 1);
+        lua_pop(L, 1);
+    }
     for (const TouchKey& k : touching)
     {
         if (now.find(k) != now.end())
@@ -1408,13 +1675,34 @@ void oboxRunFrames(Host* host, int frames, double dt)
 
     for (int i = 0; i < frames; ++i)
     {
+        // Wall-clock run deadline: bounds the frame loop even when scripts
+        // never yield (e.g. `while true do task.wait(0) end` with --seconds).
+        if (oboxWallNow() > host->runDeadline)
+        {
+            std::printf("[OpenBlox] wall-clock run deadline exceeded, stopping\n");
+            break;
+        }
         lua_pushnumber(L, dt);
         rs->heartbeat.fire(*host->sched, L, 1);
         lua_pop(L, 1);
         host->sched->step(dt);
+        oboxPhysicsStep(host, dt);
+        oboxServiceStep(host, dt);
         touchCheck(host);
+        // Early exit: nothing left to simulate or listen for.
+        if (host->sched->idle() && rs->heartbeat.connectedCount() == 0 &&
+            !host->sawUnanchored)
+            break;
     }
     // Drain leftover scheduled work (bounded).
     for (int i = 0; i < 1200 && !host->sched->idle(); ++i)
+    {
+        if (oboxWallNow() > host->runDeadline)
+        {
+            std::printf("[OpenBlox] wall-clock run deadline exceeded, stopping\n");
+            break;
+        }
         host->sched->step(dt);
+        touchCheck(host); // final positions can still create/end touches
+    }
 }
