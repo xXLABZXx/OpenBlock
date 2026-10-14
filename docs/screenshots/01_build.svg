@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="314" viewBox="0 0 560 314">
+<rect width="560" height="314" rx="10" fill="#1e1e1e"/>
+<rect width="560" height="38" rx="10" fill="#2d2d2d"/>
+<rect y="28" width="560" height="10" fill="#2d2d2d"/>
+<circle cx="20" cy="19" r="6" fill="#ff5f57"/>
+<circle cx="40" cy="19" r="6" fill="#febc2e"/>
+<circle cx="60" cy="19" r="6" fill="#28c840"/>
+<text x="280" y="24" fill="#e6e6e6" font-family="Menlo,Consolas,monospace" font-size="13" text-anchor="middle" font-weight="bold">OpenBlock — Build</text>
+<text x="18" y="56" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[  3%] Built target Luau.Common</text>
+<text x="18" y="76" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[  7%] Built target Luau.Ast</text>
+<text x="18" y="96" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[ 10%] Built target Luau.Bytecode</text>
+<text x="18" y="116" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[ 29%] Built target Luau.VM</text>
+<text x="18" y="136" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[ 32%] Built target Luau.Compiler</text>
+<text x="18" y="156" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[ 34%] Built target Luau.Inliner</text>
+<text x="18" y="176" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[ 52%] Built target Luau.CodeGen</text>
+<text x="18" y="196" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[ 55%] Built target openblox</text>
+<text x="18" y="216" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[ 57%] Built target Luau.Config</text>
+<text x="18" y="236" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[ 59%] Built target Luau.CLI.lib</text>
+<text x="18" y="256" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[ 63%] Built target Luau.Require</text>
+<text x="18" y="276" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[100%] Built target Luau.Analysis</text>
+</svg>
