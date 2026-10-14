@@ -59,7 +59,12 @@ openblox/
 
 ## Current status
 
-Phase 1 (v0.1): headless core — real Luau VM, `Instance`/`DataModel`,
-datatypes, signals, `task` scheduler, script contexts, demo + tests.
-Rendering, physics, networking, and audio are architected module interfaces;
-backends land in v0.3–v0.5 per the roadmap.
+Phase 2 (v0.2): expanded engine — full CFrame/UDim2/BrickColor/Enum math
+types, services (Players, Lighting, Teams, TweenService, in-memory
+DataStoreService), Humanoid + R6-style character rig + movement physics,
+ClickDetector, ValueBase family, software renderer (`--screenshot out.ppm`),
+place save/load (`--place-out`/`--place-in`), and a full hardening pass
+(use-after-free, segfault, hang, and OOM fixes from audits + fuzzing).
+Test suite: **18/18 files passing** (121 working, 1 partial, 8 unsupported,
+0 failed). Networking and audio remain architected module interfaces;
+backends land per the roadmap.
