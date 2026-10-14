@@ -19,6 +19,14 @@ add_executable(openblox
     src/rbx.cpp
     src/scheduler.cpp
     src/bindings.cpp
+    src/mathx.cpp
+    src/bindings_math.cpp
+    src/services.cpp
+    src/bindings_services.cpp
+    src/physics.cpp
+    src/bindings_physics.cpp
+    src/render.cpp
+    src/placefile.cpp
 )
 
 target_include_directories(openblox PRIVATE
