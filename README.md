@@ -1,1 +1,65 @@
-IyBPcGVuQmxvY2sKCj4gKipXb3JraW5nIHRpdGxlLioqIE9wZW5CbG9jayBpcyBhbiBpbmRlcGVuZGVudCwgb3Blbi1zb3VyY2Ugdm94ZWwgZ2FtZQo+IGVuZ2luZSBhbmQgcGxhdGZvcm0g4oCUIGJ1aWxkLCBzY3JpcHQsIGFuZCBwbGF5IGJsb2NrLWJhc2VkIDNEIGV4cGVyaWVuY2VzLgo+IFN0cmljdGx5IGEgY2xlYW4tcm9vbSBpbXBsZW1lbnRhdGlvbjsgbm90IGFmZmlsaWF0ZWQgd2l0aCwgZW5kb3JzZWQgYnksCj4gc3BvbnNvcmVkIGJ5LCBvciBhdXRob3JpemVkIGJ5IFJvYmxveCBDb3Jwb3JhdGlvbi4gIlJvYmxveCIgaXMgYSB0cmFkZW1hcmsKPiBvZiBSb2Jsb3ggQ29ycG9yYXRpb24uCgpPcGVuQmxvY2sgaXMgYSBmcm9tLXNjcmF0Y2ggZ2FtZSBlbmdpbmU6IGEgcmVhbCBMdWF1IHNjcmlwdCBydW50aW1lLCBhCnJlZmxlY3Rpb24tZHJpdmVuIGBJbnN0YW5jZWAvYERhdGFNb2RlbGAgY29yZSwgYW5kIG1vZHVsYXIgcGh5c2ljcywKcmVuZGVyaW5nLCBuZXR3b3JraW5nLCBhdWRpbywgYW5kIHBsYXRmb3JtIHNlcnZpY2VzLgoKKipQcmluY2lwbGVzOioqIGNsZWFuLXJvb20gaW1wbGVtZW50YXRpb24g4oCUIHB1YmxpYyBkb2N1bWVudGF0aW9uLApNSVQtbGljZW5zZWQgTHVhdSwgYW5kIHBlcm1pc3NpdmVseSBsaWNlbnNlZCBkZXBlbmRlbmNpZXMgb25seS4KU2VlIGBkb2NzL0FSQ0hJVEVDVFVSRS5tZGAgwqcx4oCTMi4KCiMjIFF1aWNrIHN0YXJ0ICh2MC4xIHByb3RvdHlwZSwgaGVhZGxlc3MpCgpSZXF1aXJlbWVudHM6IENNYWtlIDMuMTYrLCBhIEMrKzE3IGNvbXBpbGVyLCBnaXQuIEx1YXUgaXMgdmVuZG9yZWQgdW5kZXIKYHRoaXJkX3BhcnR5L2x1YXVgIChNSVQpIOKAlCBubyBkb3dubG9hZHMgbmVlZGVkLgoKYGBgc2gKY21ha2UgLVMgLiAtQiBidWlsZCAtRENNQUtFX0JVSUxEX1RZUEU9UmVsZWFzZQpjbWFrZSAtLWJ1aWxkIGJ1aWxkIC0tcGFyYWxsZWwKLi9idWlsZC9vcGVuYmxveCBzY3JpcHRzL2RlbW8ubHVhdQouL2J1aWxkL29wZW5ibG94IC0tdGVzdHMgdGVzdHMgICAjIHJ1bnMgdGhlIGVuZ2luZSB0ZXN0IHN1aXRlCmBgYAoKVGhlIHRlc3QgcnVuIHJlZ2VuZXJhdGVzIHRoZSBBUEkgY292ZXJhZ2UgcmVwb3J0CihgZG9jcy9DT01QQVRJQklMSVRZLm1kYCkg4oCUIHRoZSBob25lc3QsIG1hY2hpbmUtY2hlY2tlZCByZWNvcmQgb2Ygd2hpY2gKc2NyaXB0aW5nIEFQSXMgd29yaywgcGFydGlhbGx5IHdvcmssIG9yIGFyZSB1bnN1cHBvcnRlZC4gKipObyBBUEkgaXMgbGlzdGVkCmFzIHN1cHBvcnRlZCB1bmxlc3MgYSB0ZXN0IHByb3ZlcyBpdC4qKgoKIyMgU2NyZWVuc2hvdHMKCiFbQnVpbGRdKGRvY3Mvc2NyZWVuc2hvdHMvMDFfYnVpbGQucG5nKQohW0RlbW8gb3V0cHV0XShkb2NzL3NjcmVlbnNob3RzLzAyX2RlbW8uanBnKQohW1Rlc3Qgc3VpdGVdKGRvY3Mvc2NyZWVuc2hvdHMvMDNfdGVzdHMucG5nKQohW0FQSSBjb3ZlcmFnZSBtYXRyaXhdKGRvY3Mvc2NyZWVuc2hvdHMvMDRfY29tcGF0LmpwZykKCiMjIExheW91dAoKYGBgCm9wZW5ibG94LwogIGRvY3MvICAgICAgICAgIEFSQ0hJVEVDVFVSRS5tZCwgUk9BRE1BUC5tZCwgQ09NUEFUSUJJTElUWS5tZCAoZ2VuZXJhdGVkKQogIHNyYy8gICAgICAgICAgIEMrKyBlbmdpbmU6IGx1YXUtcnVudGltZSwgY29yZS1kYXRhbW9kZWwsIGRhdGF0eXBlcywKICAgICAgICAgICAgICAgICBzY3JpcHRpbmcsIGFuZCBtb2R1bGUgaW50ZXJmYWNlcyAocGh5c2ljcy9yZW5kZXJpbmcv4oCmKQogIHNjcmlwdHMvICAgICAgIGRlbW8gZ2FtZSBzY3JpcHRzCiAgdGVzdHMvICAgICAgICAgZW5naW5lIHRlc3Qgc3VpdGUgKEx1YXUpCiAgdGhpcmRfcGFydHkvICAgdmVuZG9yZWQgTHVhdSAoTUlUKTsgbmV2ZXIgcHJvcHJpZXRhcnkgY29kZQpgYGAKCiMjIERvY3MKCi0gW0FyY2hpdGVjdHVyZV0oZG9jcy9BUkNISVRFQ1RVUkUubWQpIOKAlCBtb2R1bGUgbWFwLCBkZXNpZ24gZGVjaXNpb25zLCB2MC4xCiAgc2NvcGUsIGJpZ2dlc3QgdGVjaG5pY2FsIGNoYWxsZW5nZXMKLSBbUm9hZG1hcF0oZG9jcy9ST0FETUFQLm1kKSDigJQgcGhhc2VkIHBsYW4gd2l0aCB0ZXN0LWJhY2tlZCBkb25lLWNyaXRlcmlhCi0gW0FQSSBjb3ZlcmFnZV0oZG9jcy9DT01QQVRJQklMSVRZLm1kKSDigJQgZ2VuZXJhdGVkIGJ5IHRoZSB0ZXN0IHN1aXRlCgojIyBDdXJyZW50IHN0YXR1cwoKUGhhc2UgMSAodjAuMSk6IGhlYWRsZXNzIGNvcmUg4oCUIHJlYWwgTHVhdSBWTSwgYEluc3RhbmNlYC9gRGF0YU1vZGVsYCwKZGF0YXR5cGVzLCBzaWduYWxzLCBgdGFza2Agc2NoZWR1bGVyLCBzY3JpcHQgY29udGV4dHMsIGRlbW8gKyB0ZXN0cy4KUmVuZGVyaW5nLCBwaHlzaWNzLCBuZXR3b3JraW5nLCBhbmQgYXVkaW8gYXJlIGFyY2hpdGVjdGVkIG1vZHVsZSBpbnRlcmZhY2VzOwpiYWNrZW5kcyBsYW5kIGluIHYwLjPigJN2MC41IHBlciB0aGUgcm9hZG1hcC4K
+# OpenBlock
+
+> **Working title.** OpenBlock is an independent, open-source voxel game
+> engine and platform — build, script, and play block-based 3D experiences.
+> Strictly a clean-room implementation; not affiliated with, endorsed by,
+> sponsored by, or authorized by Roblox Corporation. "Roblox" is a trademark
+> of Roblox Corporation.
+
+OpenBlock is a from-scratch game engine: a real Luau script runtime, a
+reflection-driven `Instance`/`DataModel` core, and modular physics,
+rendering, networking, audio, and platform services.
+
+**Principles:** clean-room implementation — public documentation,
+MIT-licensed Luau, and permissively licensed dependencies only.
+See `docs/ARCHITECTURE.md` §1–2.
+
+## Quick start (v0.1 prototype, headless)
+
+Requirements: CMake 3.16+, a C++17 compiler, git. Luau is vendored under
+`third_party/luau` (MIT) — no downloads needed.
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
+./build/openblox scripts/demo.luau
+./build/openblox --tests tests   # runs the engine test suite
+```
+
+The test run regenerates the API coverage report
+(`docs/COMPATIBILITY.md`) — the honest, machine-checked record of which
+scripting APIs work, partially work, or are unsupported. **No API is listed
+as supported unless a test proves it.**
+
+## Screenshots
+
+![Build](docs/screenshots/01_build.png)
+![Demo output](docs/screenshots/02_demo.jpg)
+![Test suite](docs/screenshots/03_tests.png)
+![API coverage matrix](docs/screenshots/04_compat.jpg)
+
+## Layout
+
+```
+openblox/
+  docs/          ARCHITECTURE.md, ROADMAP.md, COMPATIBILITY.md (generated)
+  src/           C++ engine: luau-runtime, core-datamodel, datatypes,
+                 scripting, and module interfaces (physics/rendering/…)
+  scripts/       demo game scripts
+  tests/         engine test suite (Luau)
+  third_party/   vendored Luau (MIT); never proprietary code
+```
+
+## Docs
+
+- [Architecture](docs/ARCHITECTURE.md) — module map, design decisions, v0.1
+  scope, biggest technical challenges
+- [Roadmap](docs/ROADMAP.md) — phased plan with test-backed done-criteria
+- [API coverage](docs/COMPATIBILITY.md) — generated by the test suite
+
+## Current status
+
+Phase 1 (v0.1): headless core — real Luau VM, `Instance`/`DataModel`,
+datatypes, signals, `task` scheduler, script contexts, demo + tests.
+Rendering, physics, networking, and audio are architected module interfaces;
+backends land in v0.3–v0.5 per the roadmap.
