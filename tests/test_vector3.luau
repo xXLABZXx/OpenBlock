@@ -32,5 +32,5 @@ compat.check("Vector3 invalid member errors", function()
 end)
 
 compat.partial("Vector3", "Lerp, Cross, Dot, unit etc. not in v0.1")
-compat.unsupported("CFrame", "not implemented in v0.1")
-compat.unsupported("UDim/UDim2/Enum", "not implemented in v0.1")
+-- CFrame / UDim / UDim2 / Enum are covered by test_cframe.luau and
+-- test_datatypes2.luau (stale "unsupported" rows removed 2026-10-14).
