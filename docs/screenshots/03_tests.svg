@@ -1,26 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="414" viewBox="0 0 760 414">
-<rect width="760" height="414" rx="10" fill="#1e1e1e"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="834" viewBox="0 0 760 834">
+<rect width="760" height="834" rx="10" fill="#1e1e1e"/>
 <rect width="760" height="38" rx="10" fill="#2d2d2d"/>
 <rect y="28" width="760" height="10" fill="#2d2d2d"/>
 <circle cx="20" cy="19" r="6" fill="#ff5f57"/>
 <circle cx="40" cy="19" r="6" fill="#febc2e"/>
 <circle cx="60" cy="19" r="6" fill="#28c840"/>
-<text x="380" y="24" fill="#e6e6e6" font-family="Menlo,Consolas,monospace" font-size="13" text-anchor="middle" font-weight="bold">OpenBlock — Test Suite</text>
-<text x="18" y="56" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_instance.luau ---</text>
-<text x="18" y="76" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_instance.luau</text>
-<text x="18" y="96" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_modules.luau ---</text>
-<text x="18" y="116" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_modules.luau</text>
-<text x="18" y="136" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_part.luau ---</text>
-<text x="18" y="156" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_part.luau</text>
-<text x="18" y="176" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_services.luau ---</text>
-<text x="18" y="196" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_services.luau</text>
-<text x="18" y="216" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_signals.luau ---</text>
-<text x="18" y="236" fill="#e5c07b" font-family="Menlo,Consolas,monospace" font-size="13">[OpenBlox] error: thread yielded outside of task.wait()</text>
-<text x="18" y="256" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_signals.luau</text>
-<text x="18" y="276" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_task.luau ---</text>
-<text x="18" y="296" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_task.luau</text>
-<text x="18" y="316" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_vector3.luau ---</text>
-<text x="18" y="336" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_vector3.luau</text>
-<text x="18" y="356" fill="#e6e6e6" font-family="Menlo,Consolas,monospace" font-size="13">[OpenBlox] wrote docs/COMPATIBILITY.md (49 working, 1 partial, 9 unsupported, 0 failed)</text>
-<text x="18" y="376" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[OpenBlox] 7/7 test files passed</text>
+<text x="380" y="24" fill="#e6e6e6" font-family="Menlo,Consolas,monospace" font-size="13" text-anchor="middle" font-weight="bold">OpenBlock — Test Suite (18/18)</text>
+<text x="18" y="56" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_cframe.luau ---</text>
+<text x="18" y="76" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_cframe.luau</text>
+<text x="18" y="96" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_click.luau ---</text>
+<text x="18" y="116" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_click.luau</text>
+<text x="18" y="136" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_datastore.luau ---</text>
+<text x="18" y="156" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_datastore.luau</text>
+<text x="18" y="176" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_datatypes2.luau ---</text>
+<text x="18" y="196" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_datatypes2.luau</text>
+<text x="18" y="216" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_humanoid.luau ---</text>
+<text x="18" y="236" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_humanoid.luau</text>
+<text x="18" y="256" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_instance.luau ---</text>
+<text x="18" y="276" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_instance.luau</text>
+<text x="18" y="296" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_modules.luau ---</text>
+<text x="18" y="316" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_modules.luau</text>
+<text x="18" y="336" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_part.luau ---</text>
+<text x="18" y="356" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_part.luau</text>
+<text x="18" y="376" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_perf.luau ---</text>
+<text x="18" y="396" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_perf.luau</text>
+<text x="18" y="416" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_physics.luau ---</text>
+<text x="18" y="436" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_physics.luau</text>
+<text x="18" y="456" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_players.luau ---</text>
+<text x="18" y="476" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_players.luau</text>
+<text x="18" y="496" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_services.luau ---</text>
+<text x="18" y="516" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_services.luau</text>
+<text x="18" y="536" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_services2.luau ---</text>
+<text x="18" y="556" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_services2.luau</text>
+<text x="18" y="576" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_signals.luau ---</text>
+<text x="18" y="596" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_signals.luau</text>
+<text x="18" y="616" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_task.luau ---</text>
+<text x="18" y="636" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_task.luau</text>
+<text x="18" y="656" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_tween.luau ---</text>
+<text x="18" y="676" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_tween.luau</text>
+<text x="18" y="696" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_values.luau ---</text>
+<text x="18" y="716" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_values.luau</text>
+<text x="18" y="736" fill="#8b8b8b" font-family="Menlo,Consolas,monospace" font-size="13">--- tests/test_vector3.luau ---</text>
+<text x="18" y="756" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">PASS tests/test_vector3.luau</text>
+<text x="18" y="776" fill="#e6e6e6" font-family="Menlo,Consolas,monospace" font-size="13">[OpenBlox] wrote docs/COMPATIBILITY.md (121 working, 1 partial, 8 unsupported, 0 failed)</text>
+<text x="18" y="796" fill="#7ee787" font-family="Menlo,Consolas,monospace" font-size="13">[OpenBlox] 18/18 test files passed</text>
 </svg>
