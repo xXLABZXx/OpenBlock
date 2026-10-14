@@ -1,1 +1,97 @@
-IyBPcGVuQmxvY2sg4oCUIFJvYWRtYXAKCioqSXJvbiBydWxlOiBubyBBUEktc3VwcG9ydCBjbGFpbSB3aXRob3V0IGEgdGVzdC4qKiBUaGUgc3VpdGUgaW4gYHRlc3RzL2AKc2NvcmVzIGV2ZXJ5IEFQSSBtZW1iZXIgYXMg4pyFIHdvcmtpbmcsIPCfn6EgcGFydGlhbCwgb3Ig4p2MIHVuc3VwcG9ydGVkLCBhbmQKYGRvY3MvQ09NUEFUSUJJTElUWS5tZGAgaXMgZ2VuZXJhdGVkIGZyb20gdGVzdCBydW5zIOKAlCBuZXZlciBoYW5kLWVkaXRlZC4KCkFQSSBwcmlvcml0eSB0aWVycyBjb21lIGZyb20gdXNhZ2UtZnJlcXVlbmN5IHJlc2VhcmNoIGFnYWluc3QgdGhlIHB1YmxpYwpDcmVhdG9yIERvY3MgKHNlZSBgZG9jcy9BUkNISVRFQ1RVUkUubWRgIMKnOCkuIEVhY2ggcGhhc2UgYmVsb3cgbGlzdHMgc2NvcGUsCmRvbmUtY3JpdGVyaWEsIGFuZCB0b3Agcmlza3MuCgojIyBQaGFzZSAwIOKAlCBGb3VuZGF0aW9uIOKchSBkb25lCgpSZXNlYXJjaCAoTHVhdSBlbWJlZGRpbmcsIEFQSSBzdXJmYWNlLCBidWlsZGluZyBibG9ja3MpLCByZXBvIHNjYWZmb2xkLCBsZWdhbApzdGFuY2UsIGJ1aWxkIHRvb2xjaGFpbiB2ZXJpZmllZC4KCiMjIFBoYXNlIDEg4oCUIHYwLjEgSGVhZGxlc3MgY29yZSDwn5SoIG5vdwoKVGllciAwIOKAlCBub3RoaW5nIHdvcmtzIHdpdGhvdXQgdGhlc2U6CgotIFJlYWwgTHVhdSBWTSArIGByZXF1aXJlYCwgYHR5cGVvZmAsIGBwcmludGAvYHdhcm5gCi0gYEluc3RhbmNlYC9gRGF0YU1vZGVsYCBjb3JlICjCpzYgb2YgQVJDSElURUNUVVJFLm1kKSwgYGdhbWVgICsgYHdvcmtzcGFjZWAKICBnbG9iYWxzLCBgU2VydmljZVByb3ZpZGVyLkdldFNlcnZpY2VgCi0gRGF0YXR5cGVzOiBgVmVjdG9yM2AsIGBWZWN0b3IyYCwgYENGcmFtZWAsIGBDb2xvcjNgLCBgQnJpY2tDb2xvcmAsIGBVRGltYCwKICBgVURpbTJgLCBgRW51bWAKLSBgUkJYU2NyaXB0U2lnbmFsYC9gUkJYU2NyaXB0Q29ubmVjdGlvbmAsIGB0YXNrYCBsaWJyYXJ5Ci0gYFNjcmlwdGAvYExvY2FsU2NyaXB0YC9gTW9kdWxlU2NyaXB0YCBleGVjdXRpb24gY29udGV4dHMKLSBIZWFkbGVzcyB0ZXN0IGhhcm5lc3Mg4oaSIGBkb2NzL0NPTVBBVElCSUxJVFkubWRgOyBkZW1vIGdhbWUgc2NyaXB0CgoqKkRvbmUgd2hlbjoqKiBUaWVyIDAgY2hlY2tsaXN0IGlzIGdyZWVuIGluIHRoZSBnZW5lcmF0ZWQgbWF0cml4IGFuZCB0aGUgZGVtbwpzY3JpcHQgcnVucyBlbmQtdG8tZW5kLgoKIyMgUGhhc2UgMiDigJQgdjAuMiBXb3JsZCAmIGdhbWVwbGF5CgpUaWVyIDEg4oCUIG5lZWRlZCBieSBuZWFybHkgZXZlcnkgZXhwZXJpZW5jZToKCi0gQ29udGFpbmVyIHNlcnZpY2VzOiBgV29ya3NwYWNlYCwgYFBsYXllcnNgLCBgTGlnaHRpbmdgLAogIGBSZXBsaWNhdGVkU3RvcmFnZWAsIGBSZXBsaWNhdGVkRmlyc3RgLCBgU2VydmVyU2NyaXB0U2VydmljZWAsCiAgYFNlcnZlclN0b3JhZ2VgLCBgU3RhcnRlckd1aWAvYFN0YXJ0ZXJQYWNrYC9gU3RhcnRlclBsYXllcmAsIGBTb3VuZFNlcnZpY2VgLAogIGBUZWFtc2AKLSBgTW9kZWxgLCBgRm9sZGVyYCwgYEJhc2VQYXJ0YC9gUGFydGAgKCsgYE1lc2hQYXJ0YCwgYFdlZGdlUGFydGAsCiAgYFNwYXduTG9jYXRpb25gLCBgU2VhdGApLCBgSHVtYW5vaWRgICsgUjYvUjE1IHJpZyBjb252ZW50aW9ucywgYFRvb2xgLAogIGBWYWx1ZUJhc2VgIGZhbWlseSwgYENsaWNrRGV0ZWN0b3JgLCBgUHJveGltaXR5UHJvbXB0YAotIGBXb3Jrc3BhY2UuUmF5Y2FzdGAvc2hhcGVjYXN0cywgYFdvcmtzcGFjZS5HcmF2aXR5YDsgYFJ1blNlcnZpY2VgIGZyYW1lCiAgZXZlbnRzICsgYElzU2VydmVyYC9gSXNDbGllbnRgL2BJc1N0dWRpb2AKLSBgUmVtb3RlRXZlbnRgL2BSZW1vdGVGdW5jdGlvbmAvYEJpbmRhYmxlRXZlbnRgL2BCaW5kYWJsZUZ1bmN0aW9uYAogIChsb2NhbCBiZWhhdmlvciBmaXJzdDsgdHJhbnNwb3J0IGluIFBoYXNlIDUpCi0gYFR3ZWVuU2VydmljZWAsIGBEZWJyaXNgLCBgVXNlcklucHV0U2VydmljZWAsIGBDb2xsZWN0aW9uU2VydmljZWAKCioqRG9uZSB3aGVuOioqIGEgc2FtcGxlIG9iYnktc3R5bGUgZXhwZXJpZW5jZSAocGFydHMsIHRvdWNoIGV2ZW50cywgbGVhZGVyc3RhdHMsCnR3ZWVucykgcnVucyBoZWFkbGVzcyB3aXRoIHBhc3NpbmcgdGVzdHMuICoqVG9wIHJpc2s6KiogdW5kb2N1bWVudGVkCmBIdW1hbm9pZGAgYmVoYXZpb3JzLgoKIyMgUGhhc2UgMyDigJQgdjAuMyBQaHlzaWNzCgotIEpvbHQgYmVoaW5kIHRoZSBgUGh5c2ljc1dvcmxkYCBpbnRlcmZhY2U7IGNvbGxpc2lvbnM7IGNoYXJhY3RlciBjb250cm9sbGVycwogIChKb2x0J3MgYnVpbHQtaW4gY29udHJvbGxlciDihpIgUjYvUjE1IGF2YXRhcnMpOyBqb2ludHMvY29uc3RyYWludHM7IHJhZ2RvbGwKICBiYXNpY3MKLSBEZXRlcm1pbmlzdGljIGZpeGVkLXN0ZXAgc2ltdWxhdGlvbgoKKipEb25lIHdoZW46KiogY2hhcmFjdGVyIG1vdmVtZW50ICsgY29sbGlzaW9uIHRlc3Qgc2NlbmVzIGJlaGF2ZSBwZXIgc3BlYy4KKipUb3AgcmlzazoqKiBwaHlzaWNzIGVkZ2UgY2FzZXMgZ2FtZXMgc2lsZW50bHkgZGVwZW5kIG9uLgoKIyMgUGhhc2UgNCDigJQgdjAuNCBSZW5kZXJpbmcgJiBhdWRpbwoKLSBgUmVuZGVyRGV2aWNlYCBhYnN0cmFjdGlvbjsgYmdmeCBvciB3Z3B1LW5hdGl2ZSBiYWNrZW5kCi0gUGFydHMsIG1hdGVyaWFscywgbGlnaHRpbmcvc2hhZG93cywgcGFydGljbGVzLCBiYXNpYyB0ZXJyYWluCi0gbWluaWF1ZGlvICsgYFNvdW5kU2VydmljZWAgKDJELzNEIHBsYXliYWNrKQoKKipEb25lIHdoZW46KiogdGhlIFBoYXNlIDIgc2FtcGxlIGV4cGVyaWVuY2UgcmVuZGVycyByZWNvZ25pemFibHkuCioqVG9wIHJpc2s6KiogcmVuZGVyaW5nIHBhcml0eSBpcyB0aGUgbW9zdCBzdWJqZWN0aXZlIGFyZWEgdG8gdmVyaWZ5LgoKIyMgUGhhc2UgNSDigJQgdjAuNSBNdWx0aXBsYXllcgoKLSBBdXRob3JpdGF0aXZlIHNlcnZlcjsgRGF0YU1vZGVsIHJlcGxpY2F0aW9uIChjaGFuZ2Ugam91cm5hbCBvdmVyIEVOZXQpCi0gUGxheWVyIGpvaW4vbGVhdmUsIGNoYXJhY3RlciBsaWZlY3ljbGU7IFJlbW90ZUV2ZW50L0Z1bmN0aW9uIHRyYW5zcG9ydCB3aXRoCiAgc2VydmVyLXNpZGUgdmFsaWRhdGlvbjsgbGF0ZW5jeSBoYW5kbGluZyAoaW50ZXJwb2xhdGlvbiBmaXJzdCwgcHJlZGljdGlvbgogIGxhdGVyKQoKKipEb25lIHdoZW46KiogdHdvIGhlYWRsZXNzIGNsaWVudHMgc2hhcmUgb25lIHNlcnZlciBzaW11bGF0aW9uIGluIHRlc3RzLgoqKlRvcCByaXNrOioqIHJlcGxpY2F0aW9uIHRpbWluZyBzZW1hbnRpY3MgKGRlZmVycmVkIHNpZ25hbHMsIG93bmVyc2hpcCkuCgojIyBQaGFzZSA2IOKAlCBQbGF0Zm9ybSBzZXJ2aWNlcwoKTG9jYWwtZmlyc3QsIGNsZWFybHkgbGFiZWxlZCBpbXBsZW1lbnRhdGlvbnMgb2YgZG9jdW1lbnRlZCBBUElzOgpgRGF0YVN0b3JlU2VydmljZWAsIGJhZGdlcywgbGVhZGVyYm9hcmRzLCBmcmllbmRzLCBjaGF0LCBnYW1lIGRpc2NvdmVyeSwKc2VydmVyIG1hbmFnZW1lbnQuCgojIyBQaGFzZSA3IOKAlCBTdHVkaW8tbGlrZSB0b29scwoKRGVidWdnZXIgKGJyZWFrcG9pbnRzL3N0ZXBwaW5nIHZpYSBMdWF1IGRlYnVnIEFQSSksIHByb2ZpbGVyLCBzY3JpcHQgZXJyb3IKcmVwb3J0aW5nLCBjb21wYXQtdGVzdGluZyBVSSwgYmFzaWMgcGxhY2UgZWRpdGluZy4KCiMjIEV4cGxpY2l0bHkgb3V0IG9mIHNjb3BlCgpCeXBhc3NpbmcgUm9ibG94IGF1dGhlbnRpY2F0aW9uL3NlY3VyaXR5L2FjY2VzcyBjb250cm9sczsgcmVkaXN0cmlidXRpbmcKcHJvcHJpZXRhcnkgUm9ibG94IGFzc2V0czsgdW5kb2N1bWVudGVkIGVuZ2luZSBpbnRlcm5hbHM7IDE6MSBgLnJieGxgIGJpbmFyeQpmaWRlbGl0eSAoYmVzdC1lZmZvcnQgaW1wb3J0LCB2YWxpZGF0ZWQgYWdhaW5zdCByZWFsIFN0dWRpbyBvdXRwdXQpLgo=
+# OpenBlock — Roadmap
+
+**Iron rule: no API-support claim without a test.** The suite in `tests/`
+scores every API member as ✅ working, 🟡 partial, or ❌ unsupported, and
+`docs/COMPATIBILITY.md` is generated from test runs — never hand-edited.
+
+API priority tiers come from usage-frequency research against the public
+Creator Docs (see `docs/ARCHITECTURE.md` §8). Each phase below lists scope,
+done-criteria, and top risks.
+
+## Phase 0 — Foundation ✅ done
+
+Research (Luau embedding, API surface, building blocks), repo scaffold, legal
+stance, build toolchain verified.
+
+## Phase 1 — v0.1 Headless core 🔨 now
+
+Tier 0 — nothing works without these:
+
+- Real Luau VM + `require`, `typeof`, `print`/`warn`
+- `Instance`/`DataModel` core (§6 of ARCHITECTURE.md), `game` + `workspace`
+  globals, `ServiceProvider.GetService`
+- Datatypes: `Vector3`, `Vector2`, `CFrame`, `Color3`, `BrickColor`, `UDim`,
+  `UDim2`, `Enum`
+- `RBXScriptSignal`/`RBXScriptConnection`, `task` library
+- `Script`/`LocalScript`/`ModuleScript` execution contexts
+- Headless test harness → `docs/COMPATIBILITY.md`; demo game script
+
+**Done when:** Tier 0 checklist is green in the generated matrix and the demo
+script runs end-to-end.
+
+## Phase 2 — v0.2 World & gameplay
+
+Tier 1 — needed by nearly every experience:
+
+- Container services: `Workspace`, `Players`, `Lighting`,
+  `ReplicatedStorage`, `ReplicatedFirst`, `ServerScriptService`,
+  `ServerStorage`, `StarterGui`/`StarterPack`/`StarterPlayer`, `SoundService`,
+  `Teams`
+- `Model`, `Folder`, `BasePart`/`Part` (+ `MeshPart`, `WedgePart`,
+  `SpawnLocation`, `Seat`), `Humanoid` + R6/R15 rig conventions, `Tool`,
+  `ValueBase` family, `ClickDetector`, `ProximityPrompt`
+- `Workspace.Raycast`/shapecasts, `Workspace.Gravity`; `RunService` frame
+  events + `IsServer`/`IsClient`/`IsStudio`
+- `RemoteEvent`/`RemoteFunction`/`BindableEvent`/`BindableFunction`
+  (local behavior first; transport in Phase 5)
+- `TweenService`, `Debris`, `UserInputService`, `CollectionService`
+
+**Done when:** a sample obby-style experience (parts, touch events, leaderstats,
+tweens) runs headless with passing tests. **Top risk:** undocumented
+`Humanoid` behaviors.
+
+## Phase 3 — v0.3 Physics
+
+- Jolt behind the `PhysicsWorld` interface; collisions; character controllers
+  (Jolt's built-in controller → R6/R15 avatars); joints/constraints; ragdoll
+  basics
+- Deterministic fixed-step simulation
+
+**Done when:** character movement + collision test scenes behave per spec.
+**Top risk:** physics edge cases games silently depend on.
+
+## Phase 4 — v0.4 Rendering & audio
+
+- `RenderDevice` abstraction; bgfx or wgpu-native backend
+- Parts, materials, lighting/shadows, particles, basic terrain
+- miniaudio + `SoundService` (2D/3D playback)
+
+**Done when:** the Phase 2 sample experience renders recognizably.
+**Top risk:** rendering parity is the most subjective area to verify.
+
+## Phase 5 — v0.5 Multiplayer
+
+- Authoritative server; DataModel replication (change journal over ENet)
+- Player join/leave, character lifecycle; RemoteEvent/Function transport with
+  server-side validation; latency handling (interpolation first, prediction
+  later)
+
+**Done when:** two headless clients share one server simulation in tests.
+**Top risk:** replication timing semantics (deferred signals, ownership).
+
+## Phase 6 — Platform services
+
+Local-first, clearly labeled implementations of documented APIs:
+`DataStoreService`, badges, leaderboards, friends, chat, game discovery,
+server management.
+
+## Phase 7 — Studio-like tools
+
+Debugger (breakpoints/stepping via Luau debug API), profiler, script error
+reporting, compat-testing UI, basic place editing.
+
+## Explicitly out of scope
+
+Bypassing Roblox authentication/security/access controls; redistributing
+proprietary Roblox assets; undocumented engine internals; 1:1 `.rbxl` binary
+fidelity (best-effort import, validated against real Studio output).
