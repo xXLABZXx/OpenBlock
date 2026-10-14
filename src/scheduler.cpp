@@ -4,10 +4,20 @@
 #include <lua.h>
 #include <lualib.h>
 
+#include <cmath>
 #include <cstdio>
 
 Scheduler::Scheduler(lua_State* mainThread) : m_main(mainThread)
 {
+}
+
+// Delays must be finite and non-negative: a NaN/Inf wake time would never be
+// reached, pinning the coroutine in the queue forever.
+static double saneDelay(double delay)
+{
+    if (!std::isfinite(delay) || delay < 0.0)
+        return 0.0;
+    return delay;
 }
 
 void Scheduler::defer(lua_State* from, int nargs, double delay)
@@ -22,7 +32,7 @@ void Scheduler::defer(lua_State* from, int nargs, double delay)
 void Scheduler::deferThread(lua_State* co, int nargs, double delay)
 {
     anchor(co);
-    m_deferred.push_back(Work{co, nargs, m_now + delay});
+    m_deferred.push_back(Work{co, nargs, m_now + saneDelay(delay)});
 }
 
 void Scheduler::anchor(lua_State* co)
@@ -47,9 +57,8 @@ void Scheduler::release(lua_State* co)
 
 void Scheduler::wait(lua_State* co, double seconds)
 {
-    if (seconds < 0)
-        seconds = 0;
-    m_sleeping.push_back(Work{co, 0, m_now + seconds});
+    double s = saneDelay(seconds);
+    m_sleeping.push_back(Work{co, 0, m_now + s});
     m_sleepSet.insert(co);
 }
 
@@ -63,7 +72,12 @@ void Scheduler::unpark(lua_State* co)
     m_sleepSet.erase(co);
 }
 
-bool Scheduler::cancel(lua_State* co)
+bool Scheduler::isParked(lua_State* co) const
+{
+    return m_sleepSet.find(co) != m_sleepSet.end();
+}
+
+bool Scheduler::dropThread(lua_State* co)
 {
     bool found = false;
     for (size_t i = 0; i < m_deferred.size();)
@@ -90,7 +104,14 @@ bool Scheduler::cancel(lua_State* co)
             ++i;
         }
     }
-    m_sleepSet.erase(co);
+    if (m_sleepSet.erase(co) != 0)
+        found = true; // parked (e.g. blocked in Signal:Wait)
+    return found;
+}
+
+bool Scheduler::cancel(lua_State* co)
+{
+    bool found = dropThread(co);
     if (found)
         release(co);
     return found;
@@ -139,7 +160,9 @@ void Scheduler::resumeWork(Work w, int nargs)
     extern double oboxWallNow();
     g_oboxDeadline = oboxWallNow() + 2.0; // 2s wall-clock per resume, prototype value
 
+    double cpuStart = oboxWallNow();
     int status = lua_resume(w.co, m_main, nargs);
+    m_cpuUsed += oboxWallNow() - cpuStart;
     g_oboxDeadline = 1e30;
 
     if (status == LUA_OK)
@@ -158,15 +181,8 @@ void Scheduler::resumeWork(Work w, int nargs)
         return;
     }
     reportError(w.co);
-    // Remove from sleep structures: a dead thread must never be resumed.
-    m_sleepSet.erase(w.co);
-    for (size_t i = 0; i < m_sleeping.size();)
-    {
-        if (m_sleeping[i].co == w.co)
-            m_sleeping.erase(m_sleeping.begin() + (long)i);
-        else
-            ++i;
-    }
+    // Remove from every queue: a dead thread must never be resumed again.
+    dropThread(w.co);
     release(w.co);
 }
 
