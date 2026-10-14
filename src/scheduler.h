@@ -37,13 +37,22 @@ public:
 
     // Parks a thread: it stays suspended with no wake time until something
     // resumes it explicitly (used by Signal:Wait). Must be followed by
-    // lua_yield by the caller.
+    // lua_yield by the caller. Parked threads are scheduler-visible: cancel()
+    // drops them and Signal::fire skips cancelled ones.
     void park(lua_State* co);
     // Removes a parked thread from the parked set (it is about to be resumed
     // by other means, e.g. a signal firing with arguments).
     void unpark(lua_State* co);
+    // True while the thread is parked (blocked in Signal:Wait, not cancelled).
+    bool isParked(lua_State* co) const;
 
     bool idle() const { return m_deferred.empty() && m_sleeping.empty(); }
+
+    // Cumulative script CPU time across resumeWork calls (watchdog DoS
+    // mitigation: the per-resume 2s budget re-arms every resume, so this
+    // bounds total CPU per Scheduler lifetime). Checked by the interrupt
+    // hook, which raises a catchable error past the budget.
+    bool cpuOverBudget() const { return m_cpuUsed >= m_cpuBudget; }
 
 private:
     struct Work
@@ -55,6 +64,13 @@ private:
 
     void resumeWork(Work w, int nargs);
     void reportError(lua_State* co);
+
+    double m_cpuUsed = 0.0;
+    double m_cpuBudget = 120.0; // seconds of script CPU per Scheduler lifetime
+
+    // Erases co from m_deferred, m_sleeping, and m_sleepSet. Returns true if
+    // the thread was queued anywhere (so the caller can release its anchor).
+    bool dropThread(lua_State* co);
 
     lua_State* m_main;
     double m_now = 0.0;
