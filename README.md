@@ -33,10 +33,10 @@ as supported unless a test proves it.**
 
 ## Screenshots
 
-![Build](docs/screenshots/01_build.png)
-![Demo output](docs/screenshots/02_demo.jpg)
-![Test suite](docs/screenshots/03_tests.png)
-![API coverage matrix](docs/screenshots/04_compat.jpg)
+![Build](docs/screenshots/01_build.svg)
+![Demo output](docs/screenshots/02_demo.svg)
+![Test suite](docs/screenshots/03_tests.svg)
+![API coverage matrix](docs/screenshots/04_compat.svg)
 
 ## Layout
 
