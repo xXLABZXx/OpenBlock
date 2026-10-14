@@ -6,6 +6,8 @@
 // and steps a fixed-timestep Heartbeat loop. --tests runs the compatibility
 // suite and regenerates docs/COMPATIBILITY.md.
 #include "bindings.h"
+#include "placefile.h"
+#include "render.h"
 
 #include <lua.h>
 #include <lualib.h>
@@ -43,6 +45,13 @@ static void oboxInterrupt(lua_State* L, int gc)
         return; // never interrupt the garbage collector
     if (oboxWallNow() > g_oboxDeadline)
         luaL_error(L, "OpenBlox: script exceeded its execution budget (infinite loop?)");
+    // Cumulative CPU budget: the per-resume watchdog re-arms every resume,
+    // so without this, spawning N threads grants ~2s CPU per thread.
+    // (Host lookup is defensive: the hook can fire on threads whose
+    // registry is not fully set up yet.)
+    Host* h = oboxGetHost(L);
+    if (h && h->sched && h->sched->cpuOverBudget())
+        luaL_error(L, "OpenBlox: script CPU budget exceeded for this run");
 }
 
 struct AllocCap
@@ -150,9 +159,11 @@ static void lockDown(Host* host)
 
 static void teardownHost(Host* host)
 {
-    lua_close(host->L);
+    // Destroy C++ objects first: Signal destructors release their Luau
+    // registry refs, which requires a live Lua state.
     delete host->sched;
     delete host->game;
+    lua_close(host->L);
     delete host;
 }
 
@@ -311,9 +322,14 @@ static void writeCompatMd(const std::string& path, const std::vector<CompatResul
     std::strftime(datebuf, sizeof(datebuf), "%Y-%m-%d", std::localtime(&t));
 
     std::ofstream f(path);
-    f << "# OpenBlox compatibility matrix\n\n";
+    if (!f)
+    {
+        std::printf("[OpenBlox] cannot open %s for writing\n", path.c_str());
+        return;
+    }
+    f << "# OpenBlock API coverage matrix\n\n";
     f << "> Generated " << datebuf << " by `openblox --tests`. "
-      << "Machine-checked: every row was exercised by the test suite. "
+      << "Machine-checked: every row was exercised by the engine's own test suite. "
       << "Never hand-edit this file.\n\n";
     f << "| API member | Status | Note |\n";
     f << "|---|---|---|\n";
@@ -406,7 +422,12 @@ static int runTests(const std::string& dir, double seconds, const std::string& c
 static void usage()
 {
     std::printf("Usage:\n"
-                "  openblox <script.luau> [--seconds N]   run a script (default 5s)\n"
+                "  openblox <script.luau> [--seconds N] [--screenshot out.ppm [--width W] [--height H]]\n"
+                "                         [--place-out f.json] [--place-in f.json]\n"
+                "      run a script (default 5s); --place-in f.json loads a place file\n"
+                "      before running, --place-out f.json saves one after, and\n"
+                "      --screenshot out.ppm renders the 3D scene to a PPM image\n"
+                "      after the run (default 640x480)\n"
                 "  openblox --tests <dir> [--seconds N] [--compat-out PATH]\n"
                 "                                        run the compatibility suite\n");
 }
@@ -422,15 +443,37 @@ int main(int argc, char** argv)
     std::string compatOut = "docs/COMPATIBILITY.md";
     std::string scriptPath;
     std::string testsDir;
+    std::string shotPath;
+    std::string placeIn;
+    std::string placeOut;
+    int shotW = 640;
+    int shotH = 480;
     for (int i = 1; i < argc; ++i)
     {
         std::string a = argv[i];
         if (a == "--tests" && i + 1 < argc)
             testsDir = argv[++i];
         else if (a == "--seconds" && i + 1 < argc)
+        {
             seconds = std::atof(argv[++i]);
+            if (!(seconds >= 0.0)) // rejects negatives and NaN; 0 means "no frames"
+            {
+                std::printf("[OpenBlox] --seconds must not be negative\n");
+                return 1;
+            }
+        }
         else if (a == "--compat-out" && i + 1 < argc)
             compatOut = argv[++i];
+        else if (a == "--screenshot" && i + 1 < argc)
+            shotPath = argv[++i];
+        else if (a == "--width" && i + 1 < argc)
+            shotW = std::atoi(argv[++i]);
+        else if (a == "--height" && i + 1 < argc)
+            shotH = std::atoi(argv[++i]);
+        else if (a == "--place-in" && i + 1 < argc)
+            placeIn = argv[++i];
+        else if (a == "--place-out" && i + 1 < argc)
+            placeOut = argv[++i];
         else if (!a.empty() && a[0] != '-')
             scriptPath = a;
         else
@@ -450,11 +493,39 @@ int main(int argc, char** argv)
     }
     AllocCap cap;
     Host* host = setupHost(cap);
+    if (!placeIn.empty())
+    {
+        if (oboxLoadPlace(host->game, placeIn))
+            std::printf("[OpenBlox] place loaded from %s\n", placeIn.c_str());
+        else
+            std::printf("[OpenBlox] WARNING: could not load place %s\n", placeIn.c_str());
+    }
     lockDown(host);
 
     std::printf("[OpenBlox] v0.1.0 running %s\n", scriptPath.c_str());
     if (oboxRunFile(host, scriptPath))
+    {
+        // Wall-clock run deadline: --seconds plus a drain grace, so scripts
+        // that never yield (e.g. `while true do task.wait(0) end`) cannot
+        // spin past the requested run length.
+        host->runDeadline = oboxWallNow() + seconds + 10.0;
         oboxRunFrames(host, (int)(seconds * 60.0), 1.0 / 60.0);
+    }
+    if (!placeOut.empty())
+    {
+        if (oboxSavePlace(host->game, placeOut))
+            std::printf("[OpenBlox] place saved to %s\n", placeOut.c_str());
+        else
+            std::printf("[OpenBlox] WARNING: could not save place %s\n", placeOut.c_str());
+    }
+    if (!shotPath.empty())
+    {
+        if (oboxRenderPPM(host, shotPath, shotW, shotH))
+            std::printf("[OpenBlox] screenshot written to %s (%dx%d)\n", shotPath.c_str(),
+                        shotW, shotH);
+        else
+            std::printf("[OpenBlox] WARNING: could not write screenshot %s\n", shotPath.c_str());
+    }
     std::printf("[OpenBlox] done\n");
     teardownHost(host);
     return 0;
